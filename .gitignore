@@ -1,2 +1,9 @@
-dist-newstyle/*
+# Cabal
+cabal/*
+
+# Direnv
+.direnv/*
+.envrc
+
+# Misc.
 *~

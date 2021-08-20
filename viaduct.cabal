@@ -30,7 +30,8 @@ common common
     NamedFieldPuns,
     NoImplicitPrelude,
     OverloadedStrings,
-    ScopedTypeVariables
+    ScopedTypeVariables,
+    StrictData
   ghc-options:
     -Weverything
     -Wno-missing-exported-signatures
@@ -43,6 +44,8 @@ common common
     -Wno-missing-safe-haskell-mode
     -Wno-missing-local-signatures
     -Wno-monomorphism-restriction
+    -Wno-prepositive-qualified-module
+    -- ^ workaround for https://github.com/haskell/cabal/pull/7352
 
   build-depends:
     base,
@@ -59,9 +62,9 @@ common executables
     viaduct
 
 common tests
+  build-tool-depends: hspec-discover:hspec-discover
   build-depends:
-    hspec,
-    hspec-discover
+    hspec
 
 -------------------------------------------------------------------------------
 
