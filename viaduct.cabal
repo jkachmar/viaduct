@@ -49,8 +49,11 @@ common common
 
   build-depends:
     base,
+    formatting,
     katip,
     lens,
+    template-haskell,
+    text,
     rio
 
 common executables
@@ -75,6 +78,7 @@ library
     App
     -- Capabilities.Http
     Capabilities.Logger
+    Capabilities.Logger.Katip
     Run
   other-modules:
     Paths_viaduct

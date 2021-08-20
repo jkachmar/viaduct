@@ -7,20 +7,35 @@ build_dir := cabal_dir + "/build"
 repl_dir := cabal_dir + "/repl"
 test_dir := cabal_dir + "/test"
 
-build:
-  cabal build {{package}} \
+build target=package:
+  cabal build {{target}} \
     --builddir '{{build_dir}}' \
     --ghc-options {{ghc_opts}}
 
+_main-target := package + ":exe:" + main
+build-main: (build _main-target)
+
+exec:
+  cabal exec \
+    --builddir {{build_dir}} \
+    --ghc-options {{ghc_opts}} \
+    -- {{main}}
+
+exec-jq:
+  cabal exec \
+    --builddir {{build_dir}} \
+    --ghc-options {{ghc_opts}} \
+    -- {{main}} | jq .
+
 test suite="unit":
   cabal test {{package}}:test:{{suite}} \
-    --builddir '{{build_dir}}' \
+    --builddir {{build_dir}} \
     --ghc-options {{ghc_opts}}
 
 repl target=package:
   cabal repl {{target}} \
-    --builddir '{{repl_dir}}' \
-    --ghc-options '{{ghc_opts}}' \
+    --builddir {{repl_dir}} \
+    --ghc-options {{ghc_opts}} \
     --repl-options '-fobject-code'
 
 ghcid target=package:
@@ -28,8 +43,8 @@ ghcid target=package:
     --restart 'viaduct.cabal' \
     --command \
       "cabal repl {{target}} \
-         --builddir '{{repl_dir}}' \
-         --ghc-options '{{ghc_opts}}' \
+         --builddir {{repl_dir}} \
+         --ghc-options {{ghc_opts}} \
          --repl-options '-fobject-code'"
 
 ghcid-test suite="unit":
@@ -38,8 +53,8 @@ ghcid-test suite="unit":
     --test "main" \
     --command \
       "cabal repl {{package}}:test:{{suite}} \
-         --builddir '{{repl_dir}}' \
-         --ghc-options '{{ghc_opts}}' \
+         --builddir {{repl_dir}} \
+         --ghc-options {{ghc_opts}} \
          --repl-options '-fobject-code'"
 
 format *FLAGS:

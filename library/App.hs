@@ -1,6 +1,6 @@
 module App where
 
-import Capabilities.Logger
+import Capabilities.Logger.Katip
   ( HasKatipConfig (..),
     KatipConfig,
     KatipLogger (..),
