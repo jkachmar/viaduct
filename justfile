@@ -41,3 +41,6 @@ ghcid-test suite="unit":
          --builddir '{{repl_dir}}' \
          --ghc-options '{{ghc_opts}}' \
          --repl-options '-fobject-code'"
+
+format *FLAGS:
+  ./scripts/ormolu.sh {{FLAGS}}
