@@ -17,9 +17,9 @@ runApp cfg (App app) = liftIO (app cfg)
 
 -- | The application type.
 --
--- This is provides a simple environment with access to a top-level 'Config'
--- object, which provides a single source of truth for application-wide
--- configuration and mutable state.
+-- This acts as an environment with access to a top-level 'Config' object as
+-- well as the production implementation for various "capabilities" defined in
+-- terms of some typeclass interface and newtype "carrier".
 newtype App a = App
   { unApp :: Config -> IO a
   }

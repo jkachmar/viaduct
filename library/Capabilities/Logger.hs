@@ -79,8 +79,8 @@ instance (MonadIO m, WithKatipConfig env m) => KatipContext (KatipLogger m) wher
 
 -- | Configuration record for a 'Katip'-powered 'Logger'.
 --
--- While not directly used by this module, it shall be used to power the
--- logging interface defined above up by 'Katip' "behind the scenes".
+-- While not directly used by this module, it powers the logging interface
+-- interface defined above up by 'Katip' "behind the scenes".
 data KatipConfig = KatipConfig
   { contexts :: LogContexts,
     logEnv :: LogEnv,

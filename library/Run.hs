@@ -8,9 +8,9 @@ import RIO
 
 -------------------------------------------------------------------------------
 
--- | Example effectful function within our application, only defined in terms
--- of the typeclass interfaces which define the capabilities we wish for it to
--- have access to.
+-- | Example function that performs some effects, only defined in terms of the
+-- typeclass interfaces which define the capabilities we wish for it to have
+-- access to.
 --
 -- Note that we /cannot/ perform arbitrary 'IO' actions here, as we have no
 -- access to 'IO' via 'MonadIO', 'MonadUnliftIO', etc.
@@ -26,10 +26,11 @@ app = do
 
 --------------------------------------------------------------------------------
 
--- | Main entry point for our application where we performan configuration
+-- | Main entry point for our application where we assemble the configuration
+-- and run the application.
 run :: IO ()
 run = do
-  -- Set up Katip logging configuration, these may be 'IO' actions
+  -- Set up Katip logging configuration, these may be 'IO' actions.
   contexts :: LogContexts <- undefined
   logEnv :: LogEnv <- undefined
   namespace :: Namespace <- undefined
@@ -38,5 +39,5 @@ run = do
       -- Assemble application-wide configuration.
       config = Config {katipConfig}
 
-  -- Run the application
+  -- Run the application.
   runApp config app
