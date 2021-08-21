@@ -1,6 +1,10 @@
 #! /usr/bin/env sh
 
-set -e
+################################################################################
+# Pre-flight checks.
+################################################################################
+
+set -eu
 
 command -v git >/dev/null 2>&1 || { echo >&2 "git is not installed, aborting."; exit 1; }
 
@@ -14,11 +18,17 @@ ORMOLU_VERSION="0.1.4.1"
 ( ormolu -v 2>/dev/null | grep -q "$ORMOLU_VERSION" ) || ( echo "please install ormolu $ORMOLU_VERSION (eg., run 'cabal install ormolu' and ensure ormolu is on your PATH.)"; exit 1 )
 echo "ormolu version: $ORMOLU_VERSION"
 
+################################################################################
+# Argument parsing.
+#
+# cf. https://sookocheff.com/post/bash/parsing-bash-script-arguments-with-shopts/
+################################################################################
+
 ARG_ORMOLU_BRANCH=0
 ARG_ORMOLU_MODE="inplace"
 
 USAGE="
-This bash script can either:
+This shell script can either:
 
   (a) apply ormolu formatting in-place to all haskell modules in your working
   copy; this is mostly for migrating from manually-formatted projects to
@@ -38,8 +48,6 @@ USAGE: $0
               default: ${ARG_ORMOLU_MODE}
 "
 
-# Option parsing:
-# https://sookocheff.com/post/bash/parsing-bash-script-arguments-with-shopts/
 while getopts "b:ch" opt; do
   case ${opt} in
     c ) ARG_ORMOLU_MODE="check"
@@ -62,6 +70,10 @@ if [ "$#" -ne 0 ]; then
   echo "$USAGE" 1>&2
   exit 1
 fi
+
+################################################################################
+# Execution.
+################################################################################
 
 # NOTE: This must be kept in-line with the project's 'default-extensions'.
 #
@@ -92,7 +104,7 @@ fi
 
 for hsfile in $hsfiles; do
     FAILED=0
-    # Intended splitting of LANGUAGE_EXTS
+    # Intended splitting of 'LANGUAGE_EXTS'.
     # shellcheck disable=SC2086
     ormolu --mode $ARG_ORMOLU_MODE --check-idempotence $LANGUAGE_EXTS "$hsfile" || FAILED=1
     if [ "$FAILED" = "1" ]; then
