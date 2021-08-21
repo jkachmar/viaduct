@@ -1,13 +1,30 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> { } }:
 
-pkgs.mkShell {
-  buildInputs = with pkgs; [
+let
+  # General-purpose tools, formatters, etc.
+  devTools = with pkgs; [
+    just
+    jq
+    nixpkgs-fmt
+    shellcheck
+  ];
+
+  # Haskell-specific tools, formatters, etc.
+  haskellDeps = (with pkgs; [
     cabal-install
     ghcid
     haskell.compiler.ghc8104
-    just
-    jq
     ormolu
-    shellcheck
+  ]) ++ (with pkgs.haskellPackages; [
+    cabal-fmt
+  ]);
+
+  # System-level dependencies that some libraries may require (e.g. zlib).
+  systemDeps = with pkgs; [
+    zlib.dev
   ];
+in
+
+pkgs.mkShell {
+  buildInputs = devTools ++ haskellDeps ++ systemDeps;
 }
