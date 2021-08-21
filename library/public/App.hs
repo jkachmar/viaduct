@@ -4,11 +4,8 @@ import Capabilities.Logger (Logger)
 import Capabilities.Logger.Katip
   ( HasKatipConfig (..),
     KatipConfig,
-    KatipLogger (..),
-    KatipM (..),
+    ProductionLogger (..),
   )
-import Katip (Katip, KatipContext)
-import Katip.Monadic (NoLoggingT (..))
 import RIO
 
 --------------------------------------------------------------------------------
@@ -34,15 +31,9 @@ newtype App a = App
       MonadUnliftIO
     )
     via (RIO Config)
-  -- deriving
-  --   (Katip, KatipContext)
-  --   via (NoLoggingT App)
-  deriving
-    (Katip, KatipContext)
-    via (KatipM App)
-  deriving
-    (Logger)
-    via (KatipLogger App)
+  deriving (Logger) via (ProductionLogger Config App)
+
+--------------------------------------------------------------------------------
 
 -- | Application-wide configuration and shared mutable state.
 --

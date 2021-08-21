@@ -6,7 +6,7 @@ module Run (run) where
 import App (Config (..), runApp)
 import Capabilities.Logger qualified as Log
 import Capabilities.Logger.Katip (KatipConfig (..), Logger)
-import Formatting (bformat, int, (%))
+import Formatting (bformat, int, text, (%))
 import Katip qualified as Katip
 import RIO
 
@@ -26,8 +26,8 @@ app = do
   -- Example HTTP calls...
   -- result :: Text <- Http.call undefined undefined
 
-  Log.info $ bformat ("Number of requests served: " % int) (0 :: Int)
-  Log.debug $ bformat ("Number of requests served: " % int) (0 :: Int)
+  Log.debug $ bformat ("Logging some number: " % int) (0 :: Int)
+  Log.debug $ bformat (text % "-style formatting in Haskell!") "printf"
 
 --------------------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ mkLogEnv formatter = do
       formatter
       Katip.ColorIfTerminal
       stdout
-      (Katip.permitItem Katip.DebugS)
+      (Katip.permitItem Katip.InfoS)
       Katip.V2
   Katip.initLogEnv "viaduct" "production" >>= \logEnv ->
     Katip.registerScribe
