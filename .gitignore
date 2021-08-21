@@ -1,5 +1,6 @@
 # Cabal
 cabal/*
+dist-newstyle/*
 
 # Direnv
 .direnv/*

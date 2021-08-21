@@ -6,8 +6,8 @@ module Run (run) where
 import App (Config (..), runApp)
 import Capabilities.Logger qualified as Log
 import Capabilities.Logger.Katip (KatipConfig (..), Logger)
+import Formatting (bformat, int, (%))
 import Katip qualified as Katip
-import Formatting ((%), bformat, int)
 import RIO
 
 -------------------------------------------------------------------------------

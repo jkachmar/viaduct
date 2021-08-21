@@ -1,12 +1,14 @@
 module App where
 
+import Capabilities.Logger (Logger)
 import Capabilities.Logger.Katip
   ( HasKatipConfig (..),
     KatipConfig,
     KatipLogger (..),
-    Logger (..),
+    KatipM (..),
   )
 import Katip (Katip, KatipContext)
+import Katip.Monadic (NoLoggingT (..))
 import RIO
 
 --------------------------------------------------------------------------------
@@ -24,17 +26,23 @@ newtype App a = App
   { unApp :: Config -> IO a
   }
   deriving
-    ( Functor,
-      Applicative,
+    ( Applicative,
+      Functor,
       Monad,
       MonadIO,
-      MonadUnliftIO,
-      MonadReader Config
+      MonadReader Config,
+      MonadUnliftIO
     )
     via (RIO Config)
+  -- deriving
+  --   (Katip, KatipContext)
+  --   via (NoLoggingT App)
   deriving
-    (Katip, KatipContext, Logger)
-    via (KatipLogger (RIO Config))
+    (Katip, KatipContext)
+    via (KatipM App)
+  deriving
+    (Logger)
+    via (KatipLogger App)
 
 -- | Application-wide configuration and shared mutable state.
 --

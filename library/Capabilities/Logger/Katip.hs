@@ -9,10 +9,13 @@ module Capabilities.Logger.Katip
     -- ** Typeclass interface
     Logger (..),
 
-    -- *** Katip-based instance carrier
+    -- *** Katip-based Logger instance carrier
     KatipLogger (..),
 
-    -- ** Configuration
+    -- * "Real-world" Katip logger instance carrier
+    KatipM (..),
+
+    -- ** "Real-world" Katip logger configuration
     KatipConfig (..),
     HasKatipConfig (..),
     contextsL,
@@ -41,8 +44,18 @@ import RIO.List (headMaybe)
 
 --------------------------------------------------------------------------------
 
+-- | A newtype whose primary purpose is to serve as a "carrier" for 'Logger'
+-- instances powered by 'Katip' and 'IO'.
+--
+-- This makes it possible to trivially derive all the capabilities provided by
+-- a 'Logger' in terms of some type's underlying 'Katip' and 'KatipContext'
+-- instances.
+type KatipLogger :: (Type -> Type) -> Type -> Type
+newtype KatipLogger m result = KatipLogger (m result)
+  deriving newtype (Functor, Applicative, Monad, MonadIO, Katip, KatipContext)
+
 -- | All 'KatipLogger's fulfill the logging interface described by 'Logger'.
-instance (MonadIO m, WithKatipConfig env m) => Logger (KatipLogger m) where
+instance (MonadIO m, KatipContext m) => Logger (KatipLogger m) where
   debug = logItemM (toLoc ?callStack) DebugS . LogStr
   info = logItemM (toLoc ?callStack) InfoS . LogStr
   warn = logItemM (toLoc ?callStack) WarningS . LogStr
@@ -64,30 +77,29 @@ toLoc stk =
 
 --------------------------------------------------------------------------------
 
--- | A newtype whose primary purpose is to serve as a "carrier" for 'Logger'
--- instances powered by 'Katip' and 'IO'.
---
--- This makes it possible to trivially derive all the capabilities provided by
--- 'KatipLogger' for other types with a similar structure.
-type KatipLogger :: (Type -> Type) -> Type -> Type
-newtype KatipLogger m result = KatipLogger (m result)
+-- | A newtype whose primary purpose is to implement the 'Katip' and
+-- 'KatipContext' instances in terms of the 'WithKatipConfig' constraint, which
+-- will be used to retrieve katip configuration information from some other
+-- configuration record.
+type KatipM :: (Type -> Type) -> Type -> Type
+newtype KatipM m result = KatipM (m result)
   deriving newtype (Functor, Applicative, Monad, MonadIO, MonadReader env)
 
-instance (MonadIO m, WithKatipConfig env m) => Katip (KatipLogger m) where
+instance (MonadIO m, WithKatipConfig env m) => Katip (KatipM m) where
   getLogEnv = view (katipConfigL . logEnvL)
-  localLogEnv modifyLogEnv (KatipLogger action) =
-    KatipLogger $
+  localLogEnv modifyLogEnv (KatipM action) =
+    KatipM $
       local (over (katipConfigL . logEnvL) modifyLogEnv) action
 
-instance (MonadIO m, WithKatipConfig env m) => KatipContext (KatipLogger m) where
+instance (MonadIO m, WithKatipConfig env m) => KatipContext (KatipM m) where
   getKatipContext = view (katipConfigL . contextsL)
-  localKatipContext modifyContexts (KatipLogger action) =
-    KatipLogger $
+  localKatipContext modifyContexts (KatipM action) =
+    KatipM $
       local (over (katipConfigL . contextsL) modifyContexts) action
 
   getKatipNamespace = view (katipConfigL . namespaceL)
-  localKatipNamespace modifyNamespace (KatipLogger action) =
-    KatipLogger $
+  localKatipNamespace modifyNamespace (KatipM action) =
+    KatipM $
       local (over (katipConfigL . namespaceL) modifyNamespace) action
 
 --------------------------------------------------------------------------------
