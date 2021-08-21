@@ -57,5 +57,7 @@ ghcid-test suite="unit":
          --ghc-options {{ghc_opts}} \
          --repl-options '-fobject-code'"
 
+
 format *FLAGS:
   ./scripts/ormolu.sh {{FLAGS}}
+  ./scripts/cabal-fmt.sh {{FLAGS}}

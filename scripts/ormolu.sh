@@ -106,7 +106,12 @@ for hsfile in $hsfiles; do
     FAILED=0
     # Intended splitting of 'LANGUAGE_EXTS'.
     # shellcheck disable=SC2086
-    ormolu --mode $ARG_ORMOLU_MODE --check-idempotence $LANGUAGE_EXTS "$hsfile" || FAILED=1
+    ormolu \
+      --mode $ARG_ORMOLU_MODE \
+      --check-idempotence $LANGUAGE_EXTS \
+      "$hsfile" \
+    || FAILED=1
+
     if [ "$FAILED" = "1" ]; then
         FAILURES=$((FAILURES+1))
         echo "$hsfile...  *** FAILED"
