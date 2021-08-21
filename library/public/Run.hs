@@ -1,7 +1,7 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE RankNTypes #-}
 
-module Run (run) where
+module Run (main) where
 
 import App (Config (..), runApp)
 import Capabilities.Logger qualified as Log
@@ -33,8 +33,8 @@ app = do
 
 -- | Main entry point for our application where we assemble the configuration
 -- and run the application.
-run :: IO ()
-run = do
+main :: IO ()
+main = do
   bracket (mkLogEnv Katip.jsonFormat) Katip.closeScribes \logEnv -> do
     let -- Assemble logging configuration.
         contexts = mempty

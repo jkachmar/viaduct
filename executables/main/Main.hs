@@ -1,7 +1,1 @@
-module Main where
-
-import RIO (IO)
-import Run (run)
-
-main :: IO ()
-main = run
+import Run (main)
