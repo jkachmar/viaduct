@@ -1,6 +1,10 @@
 { pkgs ? import <nixpkgs> { } }:
 
 let
+  inherit (pkgs.lib.attrsets) optionalAttrs;
+  inherit (pkgs.lib.strings) makeLibraryPath;
+  inherit (pkgs.stdenv) isLinux;
+
   # General-purpose tools, formatters, etc.
   devTools = with pkgs; [
     just
@@ -21,10 +25,13 @@ let
 
   # System-level dependencies that some libraries may require (e.g. zlib).
   systemDeps = with pkgs; [
-    zlib.dev
+    zlib
   ];
 in
 
-pkgs.mkShell {
+pkgs.mkShell ({
   buildInputs = devTools ++ haskellDeps ++ systemDeps;
-}
+} // optionalAttrs isLinux {
+  # Ensure that all 'systemDeps' are installed appropriately on Linux. 
+  LD_LIBRARY_PATH = makeLibraryPath systemDeps;
+})
