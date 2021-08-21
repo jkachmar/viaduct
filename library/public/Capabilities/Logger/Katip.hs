@@ -41,7 +41,6 @@ import Katip
     Severity (..),
     logItemM,
   )
-import Katip.Monadic (NoLoggingT (..))
 import Language.Haskell.TH.Syntax (Loc (..))
 import RIO
 import RIO.List (headMaybe)
