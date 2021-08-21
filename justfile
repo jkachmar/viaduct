@@ -1,7 +1,9 @@
 package := "viaduct"
 main := "app"
-ghc_opts := "-j"
+ghc_opts := ""
 repl_opts := '-O0 -fobject-code'
+# set the number of threads for cabal to use when building.
+num_threads := ""
 
 cabal_dir := "cabal"
 build_dir := cabal_dir + "/build"
@@ -10,8 +12,9 @@ test_dir := cabal_dir + "/test"
 
 build target=package:
   cabal build {{target}} \
+    -j{{num_threads}} \
     --builddir '{{build_dir}}' \
-    --ghc-options {{ghc_opts}}
+    --ghc-options '{{ghc_opts}}'
 
 _main-target := package + ":exe:" + main
 build-main: (build _main-target)
