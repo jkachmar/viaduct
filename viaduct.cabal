@@ -49,11 +49,13 @@ common common
 
   build-depends:
     base,
+    conduit,
     formatting,
     katip,
     lens,
     template-haskell,
     text,
+    req,
     rio
 
 common executables
