@@ -1,6 +1,7 @@
 package := "viaduct"
 main := "app"
 ghc_opts := "-j"
+repl_opts := '-O0 -fobject-code'
 
 cabal_dir := "cabal"
 build_dir := cabal_dir + "/build"
@@ -36,7 +37,7 @@ repl target=package:
   cabal repl {{target}} \
     --builddir {{repl_dir}} \
     --ghc-options {{ghc_opts}} \
-    --repl-options '-fobject-code'
+    --repl-options {{repl_opts}}
 
 ghcid target=package:
   ghcid \
@@ -45,7 +46,7 @@ ghcid target=package:
       "cabal repl {{target}} \
          --builddir {{repl_dir}} \
          --ghc-options {{ghc_opts}} \
-         --repl-options '-fobject-code'"
+         --repl-options {{repl_opts}}"
 
 ghcid-test suite="unit":
   ghcid \
@@ -55,8 +56,7 @@ ghcid-test suite="unit":
       "cabal repl {{package}}:test:{{suite}} \
          --builddir {{repl_dir}} \
          --ghc-options {{ghc_opts}} \
-         --repl-options '-fobject-code'"
-
+         --repl-options {{repl_opts}}"
 
 format *FLAGS:
   ./scripts/ormolu.sh {{FLAGS}}
